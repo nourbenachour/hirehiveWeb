@@ -1,0 +1,10 @@
+twig:
+    default_path: '%kernel.project_dir%/templates'
+    # Ajoute le répertoire dédié à Nour comme racine Twig pour résoudre
+    # les templates déplacés (auth, frontoffice, etc.) sans changer les noms.
+    paths:
+        '%kernel.project_dir%/templates/nour': ''
+
+when@test:
+    twig:
+        strict_variables: true

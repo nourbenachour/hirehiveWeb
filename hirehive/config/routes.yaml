@@ -1,0 +1,71 @@
+app_home:
+  path: /
+  controller: App\Controller\Nour\DashboardController::home
+
+app_admin:
+  path: /admin
+  controller: App\Controller\Nour\DashboardController::admin
+
+app_dashboard:
+  path: /dashboard
+  controller: App\Controller\Nour\DashboardController::dashboard
+
+app_login:
+  path: /login
+  controller: App\Controller\Nour\AuthController::login
+
+app_logout:
+  path: /logout
+  controller: App\Controller\Nour\AuthController::logout
+
+app_register:
+  path: /register
+  controller: App\Controller\Nour\RegistrationController::register
+
+app_frontoffice:
+  path: /frontoffice
+  controller: App\Controller\Nour\FrontofficeController::index
+
+app_frontoffice_home:
+  path: /frontoffice/home
+  controller: App\Controller\Nour\FrontofficeController::home
+
+app_frontoffice_profile:
+  path: /frontoffice/profile
+  controller: App\Controller\Nour\FrontofficeController::profile
+
+app_frontoffice_interviews:
+  path: /frontoffice/entretiens
+  controller: App\Controller\Nour\FrontofficeController::interviews
+
+app_frontoffice_reclamations:
+  path: /frontoffice/reclamations
+  controller: App\Controller\Nour\FrontofficeController::reclamations
+
+app_frontoffice_offers:
+  path: /frontoffice/offres
+  controller: App\Controller\Nour\FrontofficeController::offers
+
+app_frontoffice_trainings:
+  path: /frontoffice/formations
+  controller: App\Controller\Nour\FrontofficeController::trainings
+
+app_frontoffice_reviews:
+  path: /frontoffice/avis
+  controller: App\Controller\Nour\FrontofficeController::reviews
+
+app_frontoffice_posts:
+  path: /frontoffice/posts
+  controller: App\Controller\Nour\FrontofficeController::posts
+
+app_frontoffice_messages:
+  path: /frontoffice/messagerie
+  controller: App\Controller\Nour\FrontofficeController::messages
+
+app_backoffice:
+  path: /backoffice
+  controller: App\Controller\Nour\BackofficeController::index
+
+controllers:
+    resource: ../src/Controller/
+    type: attribute

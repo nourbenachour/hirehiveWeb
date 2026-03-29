@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}HireHive{% endblock %}</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>🎯</text></svg>">
+    
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+        {{ encore_entry_link_tags('styles') }}
+    {% endblock %}
+
+    {% block javascripts %}
+        {{ encore_entry_script_tags('app') }}
+    {% endblock %}
+</head>
+<body class="front-root">
+    <!-- FrontOffice Main Layout -->
+    <div class="front-main-container">
+        
+        <!-- Header/Navigation -->
+        <header class="front-header">
+            <div class="front-header-content">
+                <!-- Logo -->
+                <div class="front-header-brand">
+                    <img src="/assets/logo.png" alt="HireHive" class="front-header-logo">
+                </div>
+
+                <!-- Navigation Menu -->
+                <nav class="front-nav">
+                    <a href="{{ path('app_frontoffice_home') }}" class="front-nav-btn {% if app.request.attributes.get('_route') in ['app_frontoffice', 'app_frontoffice_home'] %}front-nav-btn-active{% endif %}">
+                        Accueil
+                    </a>
+                    <a href="{{ path('app_frontoffice_offers') }}" class="front-nav-btn {% if app.request.attributes.get('_route') == 'app_frontoffice_offers' %}front-nav-btn-active{% endif %}">Offres d'emploi</a>
+                    <a href="{{ path('app_frontoffice_trainings') }}" class="front-nav-btn {% if app.request.attributes.get('_route') == 'app_frontoffice_trainings' %}front-nav-btn-active{% endif %}">Formations</a>
+                    <a href="{{ path('app_frontoffice_interviews') }}" class="front-nav-btn {% if app.request.attributes.get('_route') == 'app_frontoffice_interviews' %}front-nav-btn-active{% endif %}">Entretiens</a>
+                    <a href="{{ path('app_frontoffice_reclamations') }}" class="front-nav-btn {% if app.request.attributes.get('_route') == 'app_frontoffice_reclamations' %}front-nav-btn-active{% endif %}">Réclamations</a>
+                    <a href="{{ path('app_frontoffice_reviews') }}" class="front-nav-btn {% if app.request.attributes.get('_route') == 'app_frontoffice_reviews' %}front-nav-btn-active{% endif %}">Avis</a>
+                    <a href="{{ path('app_frontoffice_posts') }}" class="front-nav-btn {% if app.request.attributes.get('_route') == 'app_frontoffice_posts' %}front-nav-btn-active{% endif %}">Posts</a>
+                    <a href="{{ path('app_frontoffice_messages') }}" class="front-nav-btn {% if app.request.attributes.get('_route') == 'app_frontoffice_messages' %}front-nav-btn-active{% endif %}">Messagerie</a>
+                    <a href="{{ path('app_frontoffice_profile') }}" class="front-nav-btn {% if app.request.attributes.get('_route') == 'app_frontoffice_profile' %}front-nav-btn-active{% endif %}">Mon profil</a>
+                </nav>
+
+                <div class="front-header-spacer"></div>
+
+                <!-- User Block + Theme Toggle -->
+                <div class="front-user-shell">
+                    <!-- Theme Toggle -->
+                    <div class="theme-toggle-container">
+                        <button class="theme-toggle-btn" id="btnThemeSun" title="Mode Clair">☀</button>
+                        <button class="theme-toggle-btn theme-toggle-btn-active" id="btnThemeMoon" title="Mode Sombre">🌙</button>
+                    </div>
+
+                    <!-- User Info -->
+                    <div class="front-user-block">
+                        <img src="https://ui-avatars.com/api/?name=User&background=6D28D9&color=fff" alt="Avatar" class="front-user-photo">
+                        <div class="front-user-info">
+                            <div class="front-user-name">Utilisateur</div>
+                            <div class="front-user-role">Candidat</div>
+                        </div>
+                    </div>
+
+                    <!-- Logout Button -->
+                    <a href="{{ path('app_logout') }}" class="front-btn-logout">Déconnexion</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="front-content">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="flash flash-{{ label }}">{{ message }}</div>
+                {% endfor %}
+            {% endfor %}
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- Base Styles for Layout Structure -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body.front-root {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            background-color: #ffffff;
+            color: #1f2937;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.front-root.dark-mode {
+            background-color: #111827;
+            color: #f3f4f6;
+        }
+
+        .front-main-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* ========== HEADER STYLES ========== */
+        .front-header {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: background-color 0.3s;
+        }
+
+        body.front-root.dark-mode .front-header {
+            background: #1f2937;
+            border-bottom-color: #374151;
+        }
+
+        .front-header-content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 4px 28px;
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .front-header-brand {
+            display: flex;
+            align-items: center;
+            min-width: 140px;
+        }
+
+        .front-header-logo {
+            height: 140px;
+            width: 140px;
+            object-fit: contain;
+        }
+
+        /* Navigation */
+        .front-nav {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .front-nav-btn {
+            padding: 8px 16px;
+            border: 1px solid #c4b5fd;
+            background: #ede9fe;
+            color: #5b21b6;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 9999px;
+            text-decoration: none;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        body.front-root.dark-mode .front-nav-btn {
+            background: rgba(139, 92, 246, 0.18);
+            border-color: rgba(167, 139, 250, 0.45);
+            color: #e9d5ff;
+        }
+
+        .front-nav-btn:hover {
+            background: #ddd6fe;
+            border-color: #a78bfa;
+            color: #4c1d95;
+        }
+
+        body.front-root.dark-mode .front-nav-btn:hover {
+            background: rgba(139, 92, 246, 0.32);
+            border-color: #a78bfa;
+            color: #f5f3ff;
+        }
+
+        .front-nav-btn-active {
+            background: linear-gradient(135deg, #8c5cf6 0%, #6d28d9 100%) !important;
+            border-color: transparent !important;
+            color: #ffffff !important;
+            box-shadow: 0 2px 10px rgba(124, 58, 237, 0.35);
+        }
+
+        body.front-root.dark-mode .front-nav-btn-active {
+            box-shadow: 0 2px 12px rgba(124, 58, 237, 0.45);
+        }
+
+        /* Spacer */
+        .front-header-spacer {
+            flex: 1;
+        }
+
+        /* User Shell */
+        .front-user-shell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            background: #f3f4f6;
+            border-radius: 12px;
+            padding: 4px;
+        }
+
+        body.front-root.dark-mode .theme-toggle-container {
+            background: #374151;
+        }
+
+        .theme-toggle-btn {
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle-btn:hover {
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .theme-toggle-btn-active {
+            background: #8c5cf6;
+            color: white;
+        }
+
+        /* User Block */
+        .front-user-block {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .front-user-photo {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .front-user-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .front-user-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        body.front-root.dark-mode .front-user-name {
+            color: #f3f4f6;
+        }
+
+        .front-user-role {
+            font-size: 11px;
+            color: #6b7280;
+        }
+
+        body.front-root.dark-mode .front-user-role {
+            color: #9ca3af;
+        }
+
+        /* Logout Button */
+        .front-btn-logout {
+            padding: 8px 16px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .front-btn-logout:hover {
+            background: #dc2626;
+        }
+
+        /* ========== CONTENT AREA ========== */
+        .front-content {
+            flex: 1;
+            padding: 20px;
+            background: #f9fafb;
+            overflow-y: auto;
+        }
+
+        .flash {
+            padding: 12px 14px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            border: 1px solid transparent;
+        }
+        .flash-success {
+            background: #ecfdf3;
+            border-color: #bbf7d0;
+            color: #166534;
+        }
+        .flash-error {
+            background: #fef2f2;
+            border-color: #fecdd3;
+            color: #991b1b;
+        }
+
+        body.front-root.dark-mode .front-content {
+            background: #111827;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .front-header-content {
+                gap: 12px;
+                padding: 4px 16px;
+            }
+
+            .front-nav {
+                gap: 8px;
+            }
+
+            .front-nav-btn {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+
+            .front-header-logo {
+                height: 100px;
+                width: 100px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .front-header-content {
+                gap: 8px;
+                padding: 2px 12px;
+            }
+
+            .front-nav {
+                display: none;
+            }
+
+            .front-header-logo {
+                height: 60px;
+                width: 60px;
+            }
+
+            .front-user-block {
+                gap: 6px;
+            }
+
+            .front-user-photo {
+                width: 32px;
+                height: 32px;
+            }
+
+            .front-user-name {
+                font-size: 11px;
+            }
+        }
+    </style>
+</body>
+</html>

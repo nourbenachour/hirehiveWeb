@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de Bord Admin - HireHive{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ asset('build/javafx.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="admin-root">
+  <header class="admin-header">
+    <h1 class="admin-title">Tableau de Bord des Réclamations</h1>
+    <p class="admin-subtitle">Aperçu des statistiques et indicateurs clés.</p>
+  </header>
+
+  <main class="admin-main">
+    <section class="stats-grid">
+      <div class="stat-card stat-card-blue">
+        <p class="stat-label">Total Réclamations</p>
+        <p class="stat-value">{{ totalClaims|default(0) }}</p>
+      </div>
+      <div class="stat-card stat-card-yellow">
+        <p class="stat-label">En Attente</p>
+        <p class="stat-value">{{ openClaims|default(0) }}</p>
+      </div>
+      <div class="stat-card stat-card-red">
+        <p class="stat-label">Priorité Urgente</p>
+        <p class="stat-value">{{ urgentClaims|default(0) }}</p>
+      </div>
+      <div class="stat-card stat-card-green">
+        <p class="stat-label">Résolues</p>
+        <p class="stat-value">{{ resolvedClaims|default(0) }}</p>
+      </div>
+    </section>
+
+    <section class="chart-container">
+      <h2 class="chart-title">Répartition par Type</h2>
+      <canvas id="claimsChart"></canvas>
+    </section>
+  </main>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+  <script src="{{ asset('chart/chart.min.js') }}"></script>
+  <script>
+    const ctx = document.getElementById('claimsChart');
+    if (ctx) {
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: {{ chartLabels|default([])|json_encode|raw }},
+          datasets: [{
+            data: {{ chartData|default([])|json_encode|raw }},
+            backgroundColor: ['#60a5fa', '#facc15', '#f87171', '#34d399']
+          }]
+        },
+        options: {
+          plugins: {
+            legend: {
+              labels: {
+                color: '#cbd5e1'
+              }
+            }
+          }
+        }
+      });
+    }
+  </script>
+{% endblock %}
