@@ -2,9 +2,9 @@
 
 namespace App\Controller\Nour;
 
-use App\Repository\CondidatRepository;
-use App\Repository\ExperienceRepository;
-use App\Repository\UserRepository;
+use App\Repository\Nour\CondidatRepository;
+use App\Repository\Nour\ExperienceRepository;
+use App\Repository\Nour\UserRepository;
 use App\Form\UserType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
-use App\Entity\User;
+use App\Entity\Nour\User;
 
 #[Route('/backoffice')]
 #[IsGranted('ROLE_ADMIN')]
@@ -251,7 +251,7 @@ class BackofficeController extends AbstractController
     #[Route('/users/new', name: 'app_backoffice_users_new', methods: ['GET', 'POST'])]
     public function newUser(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $hasher, UserRepository $userRepository): Response
     {
-        $user = new \App\Entity\User();
+        $user = new \App\Entity\Nour\User();
         $user->setCreatedAt(new \DateTimeImmutable());
         $user->setUpdatedAt(new \DateTime());
 

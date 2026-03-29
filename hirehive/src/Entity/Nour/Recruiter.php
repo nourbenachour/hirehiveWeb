@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Nour;
 
-use App\Repository\RecruiterRepository;
+use App\Repository\Nour\RecruiterRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RecruiterRepository::class)]

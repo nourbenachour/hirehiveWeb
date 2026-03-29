@@ -1,32 +1,34 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\Nour;
 
-use App\Entity\Experience;
+use App\Entity\Nour\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Experience>
+ * @extends ServiceEntityRepository<User>
  */
-class ExperienceRepository extends ServiceEntityRepository
+class UserRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Experience::class);
+        parent::__construct($registry, User::class);
     }
 
-    public function add(Experience $entity, bool $flush = false): void
+    public function add(User $entity, bool $flush = false): void
     {
         $this->_em->persist($entity);
+
         if ($flush) {
             $this->_em->flush();
         }
     }
 
-    public function remove(Experience $entity, bool $flush = false): void
+    public function remove(User $entity, bool $flush = false): void
     {
         $this->_em->remove($entity);
+
         if ($flush) {
             $this->_em->flush();
         }

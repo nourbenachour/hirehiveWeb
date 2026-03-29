@@ -12,7 +12,7 @@ security:
                         roles: ['ROLE_ADMIN']
         app_user_provider:
             entity:
-                class: App\Entity\User
+                class: App\Entity\Nour\User
                 property: email
         chain_provider:
             chain:

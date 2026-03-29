@@ -2,9 +2,9 @@
 
 namespace App\Controller\Nour;
 
-use App\Entity\Condidat;
-use App\Entity\Recruiter;
-use App\Entity\User;
+use App\Entity\Nour\Condidat;
+use App\Entity\Nour\Recruiter;
+use App\Entity\Nour\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;

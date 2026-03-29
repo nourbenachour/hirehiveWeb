@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Nour;
 
-use App\Repository\CondidatRepository;
+use App\Repository\Nour\CondidatRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CondidatRepository::class)]

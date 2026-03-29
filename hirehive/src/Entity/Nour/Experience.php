@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Nour;
 
-use App\Repository\ExperienceRepository;
+use App\Repository\Nour\ExperienceRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ExperienceRepository::class)]
