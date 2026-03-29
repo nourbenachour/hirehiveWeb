@@ -3,6 +3,92 @@
 {% block title %}Utilisateurs - Backoffice{% endblock %}
 
 {% block backoffice_content %}
+<style>
+    /* Inline style to guarantee the violet pro table even if bundle cache lags */
+    .user-card-inline {
+        position: relative;
+        background: radial-gradient(circle at 20% 0%, rgba(168,85,247,0.08), transparent 45%), #0f0f17;
+        border: 1px solid #1c1b2d;
+        border-radius: 14px;
+        box-shadow: 0 20px 44px rgba(0,0,0,0.45), 0 0 0 1px rgba(168,85,247,0.09);
+        overflow: hidden;
+    }
+    .user-card-inline::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        border-radius: 14px;
+        box-shadow: 0 -3px 24px rgba(168,85,247,0.18);
+    }
+    .user-table-inline {
+        width: 100%;
+        border-collapse: collapse;
+        color: #e5e7eb;
+        background: #0f0f17;
+        table-layout: fixed;
+    }
+    .user-table-inline thead th {
+        position: sticky;
+        top: 0;
+        background: linear-gradient(90deg, rgba(124,58,237,0.22), rgba(124,58,237,0.05));
+        border-bottom: 1px solid #221c38;
+        padding: 14px 12px;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        box-shadow: 0 6px 12px rgba(0,0,0,0.35);
+        white-space: nowrap;
+    }
+    .user-table-inline tbody td {
+        padding: 12px 12px;
+        border-bottom: 1px solid #1c1b2d;
+        font-size: 14px;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        vertical-align: middle;
+    }
+    .user-table-inline tbody tr:nth-child(even) { background: rgba(255,255,255,0.01); }
+    .user-table-inline tbody tr:hover {
+        background: linear-gradient(90deg, rgba(124,58,237,0.08), rgba(14,165,233,0.02));
+        box-shadow: inset 2px 0 0 rgba(168,85,247,0.55);
+    }
+    .user-table-inline .left { text-align: left; }
+    .user-table-inline th.col-prenom, .user-table-inline td.col-prenom { width: 8%; }
+    .user-table-inline th.col-nom,    .user-table-inline td.col-nom    { width: 10%; }
+    .user-table-inline th.col-email,  .user-table-inline td.col-email  { width: 18%; }
+    .user-table-inline th.col-phone,  .user-table-inline td.col-phone  { width: 12%; }
+    .user-table-inline th.col-role,   .user-table-inline td.col-role   { width: 10%; }
+    .user-table-inline th.col-status, .user-table-inline td.col-status { width: 10%; }
+    .user-table-inline th.col-active, .user-table-inline td.col-active { width: 7%; }
+    .user-table-inline th.col-date,   .user-table-inline td.col-date   { width: 10%; }
+    .user-table-inline th.col-actions,.user-table-inline td.col-actions{ width: 12%; }
+    .badge-inline {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.4px;
+    }
+    .badge-verify-inline { background: rgba(37,99,235,0.18); color:#93c5fd; border:1px solid rgba(59,130,246,0.65); box-shadow:0 0 8px rgba(59,130,246,0.25); }
+    .badge-active-inline { background: rgba(22,163,74,0.14); color:#34d399; border:1px solid rgba(52,211,153,0.6); box-shadow:0 0 8px rgba(52,211,153,0.35); }
+    .role-chip-inline { padding:6px 10px; border-radius:999px; font-size:12px; font-weight:700; letter-spacing:0.3px; }
+    .role-admin-inline { background: rgba(168,85,247,0.16); color:#d9b4ff; border:1px solid rgba(168,85,247,0.55); }
+    .role-recruiter-inline { background: rgba(37,99,235,0.16); color:#bfdbfe; border:1px solid rgba(59,130,246,0.55); }
+    .role-candidate-inline { background: rgba(14,165,233,0.14); color:#a5f3fc; border:1px solid rgba(14,165,233,0.5); }
+    .actions-inline { display:flex; gap:8px; justify-content:flex-start; align-items:center; padding-right:6px; }
+    .pill-inline { width:34px; height:30px; border-radius:8px; border:1px solid #252530; background:rgba(255,255,255,0.04); color:#e2e8f0; font-weight:800; font-size:12px; cursor:pointer; transition:all .18s ease; box-shadow:0 6px 12px rgba(168,85,247,0.22); }
+    .pill-inline:hover { transform: translateY(-1px); }
+    .pill-blue-inline { background: linear-gradient(135deg, rgba(59,130,246,0.4), rgba(59,130,246,0.18)); border-color: rgba(59,130,246,0.6); color:#e0ecff; }
+    .pill-green-inline{ background: linear-gradient(135deg, rgba(34,197,94,0.4), rgba(34,197,94,0.18)); border-color: rgba(34,197,94,0.55); color:#e6ffef; }
+    .pill-red-inline  { background: linear-gradient(135deg, rgba(239,68,68,0.42), rgba(239,68,68,0.2)); border-color: rgba(239,68,68,0.55); color:#ffe4e6; }
+</style>
 <div class="user-page">
     <div class="user-page-header">
         <h2 class="user-page-title">UTILISATEURS</h2>
@@ -21,39 +107,42 @@
         { firstname:'nano', lastname:'nnn', email:'nanon.nano12@gmail.com', phone:'12312359', role:'CANDIDATE', verify:'Vérifie', active:true, created:'26-02-18 21:58', updated:'26-02-28 22:42' }
     ] %}
 
-    <div class="user-table-card">
+    <div class="user-card-inline">
         <div class="user-table-wrapper">
-            <table class="user-table">
+            <table class="user-table-inline">
                 <thead>
                     <tr>
-                        <th class="left">Prenom</th>
-                        <th class="left">Nom</th>
-                        <th class="left">Email</th>
-                        <th>Téléphone</th>
-                        <th>Role</th>
-                        <th>Statut / Ent.</th>
-                        <th>Actif</th>
-                        <th>Créé le</th>
-                        <th>Maj le</th>
-                        <th>Actions</th>
+                        <th class="left col-prenom">Prenom</th>
+                        <th class="left col-nom">Nom</th>
+                        <th class="left col-email">Email</th>
+                        <th class="col-phone">Téléphone</th>
+                        <th class="col-role">Role</th>
+                        <th class="col-status">Statut / Ent.</th>
+                        <th class="col-active">Actif</th>
+                        <th class="col-date">Créé le</th>
+                        <th class="col-date">Maj le</th>
+                        <th class="col-actions">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                 {% for user in users %}
                     <tr>
-                        <td class="left">{{ user.firstname }}</td>
-                        <td class="left">{{ user.lastname }}</td>
-                        <td class="left">{{ user.email }}</td>
-                        <td>{{ user.phone }}</td>
-                        <td>{{ user.role }}</td>
-                        <td><span class="badge badge-verify">{{ user.verify }}</span></td>
-                        <td><span class="badge badge-active">Actif</span></td>
-                        <td>{{ user.created }}</td>
-                        <td>{{ user.updated }}</td>
-                        <td class="actions-cell">
-                            <button type="button" class="pill-btn pill-blue" aria-label="R">R</button>
-                            <button type="button" class="pill-btn pill-green" aria-label="E">E</button>
-                            <button type="button" class="pill-btn pill-red" aria-label="D">D</button>
+                        <td class="left col-prenom">{{ user.firstname }}</td>
+                        <td class="left col-nom">{{ user.lastname }}</td>
+                        <td class="left col-email">{{ user.email }}</td>
+                        <td class="col-phone">{{ user.phone }}</td>
+                        <td class="col-role">
+                            {% set role_class = user.role|lower == 'admin' ? 'role-admin-inline' : (user.role|lower == 'recruiter' ? 'role-recruiter-inline' : 'role-candidate-inline') %}
+                            <span class="role-chip-inline {{ role_class }}">{{ user.role }}</span>
+                        </td>
+                        <td class="col-status"><span class="badge-inline badge-verify-inline">{{ user.verify }}</span></td>
+                        <td class="col-active"><span class="badge-inline badge-active-inline">Actif</span></td>
+                        <td class="col-date">{{ user.created }}</td>
+                        <td class="col-date">{{ user.updated }}</td>
+                        <td class="actions-cell col-actions">
+                            <button type="button" class="pill-inline pill-blue-inline" aria-label="R">R</button>
+                            <button type="button" class="pill-inline pill-green-inline" aria-label="E">E</button>
+                            <button type="button" class="pill-inline pill-red-inline" aria-label="D">D</button>
                         </td>
                     </tr>
                 {% endfor %}

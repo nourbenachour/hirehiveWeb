@@ -2721,13 +2721,22 @@ body {
 }
 
 .user-table-card {
-  background: linear-gradient(180deg, rgba(18,18,30,0.9), rgba(10,10,17,0.95));
-  border: 1px solid #1f1f2a;
+  position: relative;
+  background: radial-gradient(circle at 20% 0%, rgba(168,85,247,0.08), transparent 45%), #0f0f17;
+  border: 1px solid #1c1b2d;
   border-radius: 14px;
-  box-shadow: 0 14px 30px rgba(0,0,0,0.35);
+  box-shadow: 0 20px 44px rgba(0,0,0,0.45), 0 0 0 1px rgba(168,85,247,0.09);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+.user-table-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 14px;
+  box-shadow: 0 -3px 24px rgba(168,85,247,0.18);
 }
 
 .user-table-wrapper {
@@ -2739,40 +2748,74 @@ body {
   width: 100%;
   border-collapse: collapse;
   color: #e5e7eb;
+  background: #0f0f17;
+  table-layout: fixed;
 }
 
 .user-table thead th {
   position: sticky;
   top: 0;
-  background: #0f1020;
-  border-bottom: 1px solid #1f1f2a;
+  background: linear-gradient(90deg, rgba(124,58,237,0.22), rgba(124,58,237,0.05));
+  border-bottom: 1px solid #221c38;
   padding: 14px 12px;
   font-size: 13px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.6px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.35);
+  white-space: nowrap;
 }
+/* force header columns width */
+.user-table thead th.col-prenom { width: 8%; }
+.user-table thead th.col-nom    { width: 10%; }
+.user-table thead th.col-email  { width: 18%; }
+.user-table thead th.col-phone  { width: 12%; }
+.user-table thead th.col-role   { width: 10%; }
+.user-table thead th.col-status { width: 10%; }
+.user-table thead th.col-active { width: 7%;  }
+.user-table thead th.col-date   { width: 10%; }
+.user-table thead th.col-actions{ width: 12%;  }
 
 .user-table tbody td {
   padding: 12px 12px;
-  border-bottom: 1px solid #1f1f2a;
+  border-bottom: 1px solid #1c1b2d;
   font-size: 14px;
   text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+
+.user-table tbody tr:nth-child(even) {
+  background: rgba(255,255,255,0.01);
 }
 
 .user-table tbody tr:hover {
-  background: rgba(168,85,247,0.04);
-  transition: background 0.18s ease;
+  background: linear-gradient(90deg, rgba(124,58,237,0.08), rgba(14,165,233,0.02));
+  transition: background 0.18s ease, box-shadow 0.18s ease;
+  box-shadow: inset 2px 0 0 rgba(168,85,247,0.55);
 }
 
 .user-table .left {
   text-align: left;
 }
+.user-table th.col-prenom, .user-table td.col-prenom { width: 8%; }
+.user-table th.col-nom,    .user-table td.col-nom    { width: 10%; }
+.user-table th.col-email,  .user-table td.col-email  { width: 18%; }
+.user-table th.col-phone,  .user-table td.col-phone  { width: 12%; }
+.user-table th.col-role,   .user-table td.col-role   { width: 10%; }
+.user-table th.col-status, .user-table td.col-status { width: 10%; }
+.user-table th.col-active, .user-table td.col-active { width: 7%;  }
+.user-table th.col-date,   .user-table td.col-date   { width: 10%; }
+.user-table th.col-actions,.user-table td.col-actions{ width: 12%;  }
 
 .actions-cell {
   display: flex;
-  gap: 6px;
-  justify-content: center;
+  gap: 8px;
+  justify-content: flex-start;
+  align-items: center;
+  padding-right: 6px;
 }
 
 .badge {
@@ -2790,13 +2833,30 @@ body {
   background: rgba(22,163,74,0.14);
   color: #34d399;
   border: 1px solid rgba(52,211,153,0.6);
+  min-width: 58px;
 }
 
 .badge-verify {
   background: rgba(37,99,235,0.18);
   color: #93c5fd;
   border: 1px solid rgba(59,130,246,0.65);
+  min-width: 66px;
+  box-shadow: 0 0 8px rgba(59,130,246,0.25);
 }
+
+.role-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+.role-admin { background: rgba(168,85,247,0.16); color: #d9b4ff; border: 1px solid rgba(168,85,247,0.55); }
+.role-recruiter { background: rgba(37,99,235,0.16); color: #bfdbfe; border: 1px solid rgba(59,130,246,0.55); }
+.role-candidate { background: rgba(14,165,233,0.14); color: #a5f3fc; border: 1px solid rgba(14,165,233,0.5); }
 
 .table-icon-btn {
   background: rgba(255,255,255,0.04);
@@ -2821,15 +2881,16 @@ body {
 }
 
 .pill-btn {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
+  width: 36px;
+  height: 32px;
+  border-radius: 8px;
   border: 1px solid #252530;
   background: rgba(255,255,255,0.04);
   color: #e2e8f0;
   cursor: pointer;
   transition: all 0.18s ease;
   font-weight: 800;
+  font-size: 12px;
 }
 .pill-btn:hover { transform: translateY(-1px); }
 .pill-blue { background: rgba(59,130,246,0.16); border-color: rgba(59,130,246,0.6); color:#cbd5ff; }
