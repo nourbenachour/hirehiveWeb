@@ -1,12 +1,22 @@
 security:
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+        Symfony\Component\Security\Core\User\InMemoryUser: 'auto'
 
     providers:
+        admin_fallback:
+            memory:
+                users:
+                    hirehive29@gmail.com:
+                        password: '$2b$10$sXODt5vz6QPXGmERgT/caulT5y2qVzQCirOTHzql1JyE8iSg9dToG'
+                        roles: ['ROLE_ADMIN']
         app_user_provider:
             entity:
                 class: App\Entity\User
                 property: email
+        chain_provider:
+            chain:
+                providers: ['admin_fallback', 'app_user_provider']
 
     firewalls:
         dev:
@@ -15,7 +25,7 @@ security:
 
         main:
             lazy: true
-            provider: app_user_provider
+            provider: chain_provider
             form_login:
                 login_path: app_login
                 check_path: app_login

@@ -116,6 +116,21 @@ app_backoffice_stats:
   controller: App\Controller\Nour\BackofficeController::stats
   methods: [GET]
 
+app_backoffice_users_new:
+  path: /backoffice/users/new
+  controller: App\Controller\Nour\BackofficeController::newUser
+  methods: [GET, POST]
+
+app_backoffice_users_edit:
+  path: /backoffice/users/{id}/edit
+  controller: App\Controller\Nour\BackofficeController::editUser
+  methods: [GET, POST]
+
+app_backoffice_users_delete:
+  path: /backoffice/users/{id}
+  controller: App\Controller\Nour\BackofficeController::deleteUser
+  methods: [POST]
+
 controllers:
     resource: ../src/Controller/Nour/
     type: attribute

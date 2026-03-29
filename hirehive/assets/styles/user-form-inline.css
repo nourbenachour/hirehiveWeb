@@ -1,0 +1,27 @@
+.user-form-shell {
+  padding: 12px;
+}
+.user-form-card {
+  max-width: 720px;
+  margin: 0 auto;
+  background: #0f0f17;
+  border: 1px solid #1f1f2a;
+  border-radius: 14px;
+  box-shadow: 0 20px 44px rgba(0,0,0,0.45), 0 0 0 1px rgba(168,85,247,0.08);
+  padding: 22px;
+}
+.user-form-title {
+  margin: 0 0 14px 0;
+  color: #e2e8f0;
+}
+.form-grid-two {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+.user-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}

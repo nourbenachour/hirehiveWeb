@@ -65,7 +65,7 @@
     .user-table-inline th.col-status, .user-table-inline td.col-status { width: 10%; }
     .user-table-inline th.col-active, .user-table-inline td.col-active { width: 7%; }
     .user-table-inline th.col-date,   .user-table-inline td.col-date   { width: 10%; }
-    .user-table-inline th.col-actions,.user-table-inline td.col-actions{ width: 12%; }
+    .user-table-inline th.col-actions,.user-table-inline td.col-actions{ width: 13%; }
     .badge-inline {
         display: inline-flex;
         align-items: center;
@@ -82,17 +82,22 @@
     .role-admin-inline { background: rgba(168,85,247,0.16); color:#d9b4ff; border:1px solid rgba(168,85,247,0.55); }
     .role-recruiter-inline { background: rgba(37,99,235,0.16); color:#bfdbfe; border:1px solid rgba(59,130,246,0.55); }
     .role-candidate-inline { background: rgba(14,165,233,0.14); color:#a5f3fc; border:1px solid rgba(14,165,233,0.5); }
-    .actions-inline { display:flex; gap:8px; justify-content:flex-start; align-items:center; padding-right:6px; }
-    .pill-inline { width:34px; height:30px; border-radius:8px; border:1px solid #252530; background:rgba(255,255,255,0.04); color:#e2e8f0; font-weight:800; font-size:12px; cursor:pointer; transition:all .18s ease; box-shadow:0 6px 12px rgba(168,85,247,0.22); }
-    .pill-inline:hover { transform: translateY(-1px); }
-    .pill-blue-inline { background: linear-gradient(135deg, rgba(59,130,246,0.4), rgba(59,130,246,0.18)); border-color: rgba(59,130,246,0.6); color:#e0ecff; }
-    .pill-green-inline{ background: linear-gradient(135deg, rgba(34,197,94,0.4), rgba(34,197,94,0.18)); border-color: rgba(34,197,94,0.55); color:#e6ffef; }
-    .pill-red-inline  { background: linear-gradient(135deg, rgba(239,68,68,0.42), rgba(239,68,68,0.2)); border-color: rgba(239,68,68,0.55); color:#ffe4e6; }
+    .actions-inline { display:flex; gap:12px; justify-content:center; align-items:center; padding:6px 4px; }
+    .pill-inline { display:inline-flex; align-items:center; justify-content:center; min-width:64px; padding:0 14px; height:34px; border-radius:12px; border:1px solid rgba(124,58,237,0.65); background:linear-gradient(135deg, rgba(124,58,237,0.28), rgba(124,58,237,0.14)); color:#f8fafc; font-weight:800; font-size:12px; letter-spacing:0.3px; cursor:pointer; transition:transform .18s ease, box-shadow .18s ease, filter .18s ease; box-shadow:0 10px 18px rgba(168,85,247,0.32), inset 0 0 0 1px rgba(255,255,255,0.03); text-decoration:none; }
+    .pill-inline:hover { transform: translateY(-2px); box-shadow:0 14px 24px rgba(168,85,247,0.4), inset 0 0 0 1px rgba(255,255,255,0.08); filter:brightness(1.05); }
+    .pill-blue-inline { background: linear-gradient(145deg, #6d28d9 0%, #8b5cf6 55%, #a855f7 100%); border-color: rgba(124,58,237,0.9); color:#f8fafc; }
+    .pill-green-inline{ background: linear-gradient(145deg, #0ea5e9 0%, #22c55e 100%); border-color: rgba(34,197,94,0.75); color:#f0fff4; }
+    .pill-red-inline  { background: linear-gradient(145deg, #ef4444 0%, #f97316 80%); border-color: rgba(239,68,68,0.85); color:#fff5f5; box-shadow:0 10px 18px rgba(239,68,68,0.32), inset 0 0 0 1px rgba(255,255,255,0.04); }
 </style>
 <div class="user-page">
-    <div class="user-page-header">
-        <h2 class="user-page-title">UTILISATEURS</h2>
-        <p class="user-page-subtitle">Comptes, rôles et statuts des membres</p>
+    <div class="user-page-header" style="display:flex; align-items:center; gap:12px;">
+        <div>
+            <h2 class="user-page-title">UTILISATEURS</h2>
+            <p class="user-page-subtitle">Comptes, rôles et statuts des membres</p>
+        </div>
+        <div style="margin-left:auto;">
+            <a href="{{ path('app_backoffice_users_new') }}" class="pill-inline pill-green-inline">Ajouter</a>
+        </div>
     </div>
 
     {% set users = users ?? [
@@ -130,19 +135,25 @@
                         <td class="left col-prenom">{{ user.firstname }}</td>
                         <td class="left col-nom">{{ user.lastname }}</td>
                         <td class="left col-email">{{ user.email }}</td>
-                        <td class="col-phone">{{ user.phone }}</td>
+                        <td class="col-phone">{{ user.phone ?? '' }}</td>
                         <td class="col-role">
                             {% set role_class = user.role|lower == 'admin' ? 'role-admin-inline' : (user.role|lower == 'recruiter' ? 'role-recruiter-inline' : 'role-candidate-inline') %}
                             <span class="role-chip-inline {{ role_class }}">{{ user.role }}</span>
                         </td>
-                        <td class="col-status"><span class="badge-inline badge-verify-inline">{{ user.verify }}</span></td>
-                        <td class="col-active"><span class="badge-inline badge-active-inline">Actif</span></td>
-                        <td class="col-date">{{ user.created }}</td>
-                        <td class="col-date">{{ user.updated }}</td>
+                        {% set statusLabel = (user.status ?? user.verify ?? 'Vérifie') %}
+                        <td class="col-status"><span class="badge-inline badge-verify-inline">{{ statusLabel }}</span></td>
+                        {% set active = user.isActive ?? user.active ?? true %}
+                        <td class="col-active"><span class="badge-inline badge-active-inline">{{ active ? 'Actif' : 'Inactif' }}</span></td>
+                        <td class="col-date">{{ user.createdAt is defined and user.createdAt ? user.createdAt|date('d-m-y H:i') : (user.created ?? '') }}</td>
+                        <td class="col-date">{{ user.updatedAt is defined and user.updatedAt ? user.updatedAt|date('d-m-y H:i') : (user.updated ?? '') }}</td>
                         <td class="actions-cell col-actions">
-                            <button type="button" class="pill-inline pill-blue-inline" aria-label="R">R</button>
-                            <button type="button" class="pill-inline pill-green-inline" aria-label="E">E</button>
-                            <button type="button" class="pill-inline pill-red-inline" aria-label="D">D</button>
+                            <div class="actions-inline">
+                                <a class="pill-inline pill-blue-inline" aria-label="Edit" href="{{ path('app_backoffice_users_edit', {id: user.id ?? 0}) }}">Edit</a>
+                                <form method="post" action="{{ path('app_backoffice_users_delete', {id: user.id ?? 0}) }}" style="display:inline" onsubmit="return confirm('Supprimer ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_user_' ~ (user.id ?? 0)) }}">
+                                    <button type="submit" class="pill-inline pill-red-inline" aria-label="Delete">Delete</button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 {% endfor %}

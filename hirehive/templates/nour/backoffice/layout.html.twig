@@ -237,11 +237,11 @@
 
             <div class="user-card">
                 <div class="user-avatar">
-                    {{ (app.user.firstName ?? app.user.firstname ?? app.user.email ?? 'A')|slice(0,1)|upper }}
+                    {{ (app.user.firstName ?? app.user.firstname ?? app.user.userIdentifier ?? 'A')|slice(0,1)|upper }}
                 </div>
                 <div class="user-info">
                     <div class="user-name">{{ app.user.firstName ?? app.user.firstname ?? 'Admin' }}</div>
-                    <div class="user-email">{{ app.user.email }}</div>
+                    <div class="user-email">{{ app.user.userIdentifier ?? '' }}</div>
                 </div>
             </div>
 

@@ -238,4 +238,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
     }
+
+    /**
+     * Ensure security session serialization always carries the Doctrine identifier.
+     */
+    public function __serialize(): array
+    {
+        return [
+            'id' => $this->id,
+            'email' => $this->email,
+            'password' => $this->password,
+            'role' => $this->role,
+            'isActive' => $this->isActive,
+            'status' => $this->status,
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->id = $data['id'] ?? null;
+        $this->email = $data['email'] ?? '';
+        $this->password = $data['password'] ?? '';
+        $this->role = $data['role'] ?? 'CANDIDATE';
+        $this->isActive = $data['isActive'] ?? true;
+        $this->status = $data['status'] ?? 'USER_VERIFIED';
+    }
 }

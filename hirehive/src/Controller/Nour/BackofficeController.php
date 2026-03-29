@@ -5,6 +5,9 @@ namespace App\Controller\Nour;
 use App\Repository\CondidatRepository;
 use App\Repository\ExperienceRepository;
 use App\Repository\UserRepository;
+use App\Form\UserType;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Component\HttpClient\HttpClient;
@@ -13,7 +16,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use App\Entity\User;
 
 #[Route('/backoffice')]
 #[IsGranted('ROLE_ADMIN')]
@@ -172,9 +177,12 @@ class BackofficeController extends AbstractController
     }
 
     #[Route('/users', name: 'app_backoffice_users', methods: ['GET'])]
-    public function users(): Response
+    public function users(UserRepository $userRepository): Response
     {
-        return $this->render('nour/backoffice/users.html.twig');
+        $users = $userRepository->findBy([], ['createdAt' => 'DESC']);
+        return $this->render('nour/backoffice/users.html.twig', [
+            'users' => $users,
+        ]);
     }
 
     #[Route('/formations', name: 'app_backoffice_formations', methods: ['GET'])]
@@ -238,5 +246,88 @@ class BackofficeController extends AbstractController
             'section_title' => 'Statistiques',
             'section_description' => 'Section statistiques (placeholder).',
         ]);
+    }
+
+    #[Route('/users/new', name: 'app_backoffice_users_new', methods: ['GET', 'POST'])]
+    public function newUser(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $hasher, UserRepository $userRepository): Response
+    {
+        $user = new \App\Entity\User();
+        $user->setCreatedAt(new \DateTimeImmutable());
+        $user->setUpdatedAt(new \DateTime());
+
+        $form = $this->createForm(UserType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $existing = $userRepository->findOneBy(['email' => $user->getEmail()]);
+            if ($existing) {
+                $this->addFlash('danger', 'Email déjà utilisé');
+            } else {
+                $plain = $form->get('plainPassword')->getData();
+                $user->setPassword($hasher->hashPassword($user, $plain ?: 'Temp123!'));
+                $em->persist($user);
+                try {
+                    $em->flush();
+                    $this->addFlash('success', 'Utilisateur créé');
+                    return $this->redirectToRoute('app_backoffice_users');
+                } catch (UniqueConstraintViolationException $e) {
+                    $this->addFlash('danger', 'Email déjà utilisé');
+                }
+            }
+        }
+
+        return $this->render('nour/backoffice/user_form.html.twig', [
+            'form' => $form->createView(),
+            'title' => 'Ajouter un utilisateur',
+        ]);
+    }
+
+    #[Route('/users/{id}/edit', name: 'app_backoffice_users_edit', methods: ['GET', 'POST'])]
+    public function editUser(int $id, UserRepository $userRepository, Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $hasher): Response
+    {
+        $user = $userRepository->find($id);
+        if (!$user) {
+            throw $this->createNotFoundException('Utilisateur introuvable');
+        }
+
+        $form = $this->createForm(UserType::class, $user, ['is_edit' => true]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $existing = $userRepository->findOneBy(['email' => $user->getEmail()]);
+            if ($existing && $existing->getId() !== $user->getId()) {
+                $this->addFlash('danger', 'Email déjà utilisé');
+            } else {
+                $plain = $form->get('plainPassword')->getData();
+                if ($plain) {
+                    $user->setPassword($hasher->hashPassword($user, $plain));
+                }
+                $user->setUpdatedAt(new \DateTime());
+                try {
+                    $em->flush();
+                    $this->addFlash('success', 'Utilisateur mis à jour');
+                    return $this->redirectToRoute('app_backoffice_users');
+                } catch (UniqueConstraintViolationException $e) {
+                    $this->addFlash('danger', 'Email déjà utilisé');
+                }
+            }
+        }
+
+        return $this->render('nour/backoffice/user_form.html.twig', [
+            'form' => $form->createView(),
+            'title' => 'Modifier l’utilisateur',
+        ]);
+    }
+
+    #[Route('/users/{id}', name: 'app_backoffice_users_delete', methods: ['POST'])]
+    public function deleteUser(int $id, UserRepository $userRepository, Request $request, EntityManagerInterface $em): Response
+    {
+        $user = $userRepository->find($id);
+        if ($user && $this->isCsrfTokenValid('delete_user_'.$user->getId(), $request->request->get('_token'))) {
+            $em->remove($user);
+            $em->flush();
+            $this->addFlash('success', 'Utilisateur supprimé');
+        }
+        return $this->redirectToRoute('app_backoffice_users');
     }
 }

@@ -1,0 +1,42 @@
+{% extends 'nour/backoffice/layout.html.twig' %}
+
+{% block title %}{{ title }} - Backoffice{% endblock %}
+
+{% block backoffice_content %}
+<style>
+.user-form-shell { padding:12px; }
+.user-form-card {
+  max-width: 720px;
+  margin: 0 auto;
+  background: #0f0f17;
+  border: 1px solid #1f1f2a;
+  border-radius: 14px;
+  box-shadow: 0 20px 44px rgba(0,0,0,0.45), 0 0 0 1px rgba(168,85,247,0.08);
+  padding: 22px;
+}
+.user-form-title { margin: 0 0 14px 0; color: #e2e8f0; }
+.form-grid-two { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.user-form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px; }
+</style>
+<div class="user-form-shell">
+    <div class="user-form-card">
+        <h2 class="user-form-title">{{ title }}</h2>
+        {{ form_start(form) }}
+            <div class="form-grid-two">
+                {{ form_row(form.firstName) }}
+                {{ form_row(form.lastName) }}
+                {{ form_row(form.email) }}
+                {{ form_row(form.phone) }}
+                {{ form_row(form.role) }}
+                {{ form_row(form.status) }}
+                {{ form_row(form.isActive) }}
+                {{ form_row(form.plainPassword) }}
+            </div>
+            <div class="user-form-actions">
+                <a class="pill-inline pill-red-inline" href="{{ path('app_backoffice_users') }}">Annuler</a>
+                <button class="pill-inline pill-blue-inline" type="submit">Enregistrer</button>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}
