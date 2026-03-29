@@ -1,0 +1,65 @@
+{% extends 'nour/backoffice/layout.html.twig' %}
+
+{% block title %}Utilisateurs - Backoffice{% endblock %}
+
+{% block backoffice_content %}
+<div class="user-page">
+    <div class="user-page-header">
+        <h2 class="user-page-title">UTILISATEURS</h2>
+        <p class="user-page-subtitle">Comptes, rôles et statuts des membres</p>
+    </div>
+
+    {% set users = users ?? [
+        { firstname:'Admin', lastname:'HireHive', email:'hirehive29@gmail.com', phone:'+216 21 963 144', role:'ADMIN', verify:'-', active:true, created:'26-03-29 20:00', updated:'26-03-29 20:02' },
+        { firstname:'nour', lastname:'ben achour', email:'whaifaa60@gmail.com', phone:'+216 93 403 675', role:'RECRUITER', verify:'Vérifie', active:true, created:'26-03-29 17:54', updated:'26-03-29 17:54' },
+        { firstname:'nour', lastname:'ben achour', email:'whaifaa60@gmail.com', phone:'+216 93 403 675', role:'RECRUITER', verify:'Vérifie', active:true, created:'26-03-29 17:52', updated:'26-03-29 17:52' },
+        { firstname:'delice', lastname:'akrmi', email:'sarah@gmail.com', phone:'93403675', role:'RECRUITER', verify:'Vérifie', active:true, created:'26-02-28 21:14', updated:'26-02-28 21:18' },
+        { firstname:'rahmouni', lastname:'malek', email:'benismailade@gmail.com', phone:'+216 93 403 675', role:'CANDIDATE', verify:'Vérifie', active:true, created:'26-02-27 21:03', updated:'26-02-28 02:24' },
+        { firstname:'adem', lastname:'ben ismael', email:'adembenismaile@gmail.com', phone:'93403675', role:'CANDIDATE', verify:'Vérifie', active:true, created:'26-02-27 18:42', updated:'26-02-28 16:37' },
+        { firstname:'vbbb', lastname:'b bbb', email:'YHY.HUU123@gmail.com', phone:'98765876', role:'CANDIDATE', verify:'Vérifie', active:true, created:'26-02-18 22:30', updated:'26-02-28 22:40' },
+        { firstname:'nour', lastname:'ba', email:'nourbenachour@gmail.com', phone:'23456455', role:'CANDIDATE', verify:'Vérifie', active:true, created:'26-02-18 22:14', updated:'26-03-01 05:03' },
+        { firstname:'nano', lastname:'nnn', email:'nanon.nano12@gmail.com', phone:'12312359', role:'CANDIDATE', verify:'Vérifie', active:true, created:'26-02-18 21:58', updated:'26-02-28 22:42' }
+    ] %}
+
+    <div class="user-table-card">
+        <div class="user-table-wrapper">
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th class="left">Prenom</th>
+                        <th class="left">Nom</th>
+                        <th class="left">Email</th>
+                        <th>Téléphone</th>
+                        <th>Role</th>
+                        <th>Statut / Ent.</th>
+                        <th>Actif</th>
+                        <th>Créé le</th>
+                        <th>Maj le</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td class="left">{{ user.firstname }}</td>
+                        <td class="left">{{ user.lastname }}</td>
+                        <td class="left">{{ user.email }}</td>
+                        <td>{{ user.phone }}</td>
+                        <td>{{ user.role }}</td>
+                        <td><span class="badge badge-verify">{{ user.verify }}</span></td>
+                        <td><span class="badge badge-active">Actif</span></td>
+                        <td>{{ user.created }}</td>
+                        <td>{{ user.updated }}</td>
+                        <td class="actions-cell">
+                            <button type="button" class="pill-btn pill-blue" aria-label="R">R</button>
+                            <button type="button" class="pill-btn pill-green" aria-label="E">E</button>
+                            <button type="button" class="pill-btn pill-red" aria-label="D">D</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

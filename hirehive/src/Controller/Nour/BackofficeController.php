@@ -174,10 +174,7 @@ class BackofficeController extends AbstractController
     #[Route('/users', name: 'app_backoffice_users', methods: ['GET'])]
     public function users(): Response
     {
-        return $this->render('nour/backoffice/section.html.twig', [
-            'section_title' => 'Utilisateurs',
-            'section_description' => 'Gestion des utilisateurs (placeholder).',
-        ]);
+        return $this->render('nour/backoffice/users.html.twig');
     }
 
     #[Route('/formations', name: 'app_backoffice_formations', methods: ['GET'])]
