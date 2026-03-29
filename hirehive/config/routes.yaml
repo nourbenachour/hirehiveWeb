@@ -66,6 +66,56 @@ app_backoffice:
   path: /backoffice
   controller: App\Controller\Nour\BackofficeController::index
 
+app_backoffice_chatbot_ping:
+  path: /backoffice/chatbot/ping
+  controller: App\Controller\Nour\BackofficeController::pingWebsite
+  methods: [POST]
+
+app_backoffice_chatbot_insee:
+  path: /backoffice/chatbot/insee
+  controller: App\Controller\Nour\BackofficeController::searchInsee
+  methods: [POST]
+
+app_backoffice_users:
+  path: /backoffice/users
+  controller: App\Controller\Nour\BackofficeController::users
+  methods: [GET]
+
+app_backoffice_formations:
+  path: /backoffice/formations
+  controller: App\Controller\Nour\BackofficeController::formations
+  methods: [GET]
+
+app_backoffice_posts:
+  path: /backoffice/posts
+  controller: App\Controller\Nour\BackofficeController::postsSection
+  methods: [GET]
+
+app_backoffice_reclamations:
+  path: /backoffice/reclamations
+  controller: App\Controller\Nour\BackofficeController::reclamations
+  methods: [GET]
+
+app_backoffice_interviews:
+  path: /backoffice/interviews
+  controller: App\Controller\Nour\BackofficeController::interviews
+  methods: [GET]
+
+app_backoffice_offres:
+  path: /backoffice/offres
+  controller: App\Controller\Nour\BackofficeController::offres
+  methods: [GET]
+
+app_backoffice_parametres:
+  path: /backoffice/parametres
+  controller: App\Controller\Nour\BackofficeController::parametres
+  methods: [GET]
+
+app_backoffice_stats:
+  path: /backoffice/stats
+  controller: App\Controller\Nour\BackofficeController::stats
+  methods: [GET]
+
 controllers:
-    resource: ../src/Controller/
+    resource: ../src/Controller/Nour/
     type: attribute

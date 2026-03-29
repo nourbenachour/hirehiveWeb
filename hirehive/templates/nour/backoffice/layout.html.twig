@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Backoffice - HireHive{% endblock %}</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>*</text></svg>">
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('styles') }}
+        {{ encore_entry_link_tags('app') }}
+        <style>
+            :root {
+                --bg-primary: #0a0a0f;
+                --bg-surface: #0f0f17;
+                --bg-surface-2: #12111c;
+                --bg-panel: #0b0f1d;
+                --text-main: #e2e8f0;
+                --text-muted: #9ca3af;
+                --accent: #a855f7;
+                --accent-2: #7c3aed;
+                --accent-soft: rgba(168,85,247,0.18);
+                --border: #1f2638;
+            }
+            * { box-sizing: border-box; }
+            body, .hh-body {
+                margin: 0;
+                padding: 0;
+                background: var(--bg-primary);
+                color: var(--text-main);
+                font-family: 'Segoe UI','SF Pro Display',system-ui,-apple-system,sans-serif;
+            }
+            a { color: inherit; text-decoration: none; }
+            .dashboard-root { display:flex; flex-direction:column; min-height:100vh; background: var(--bg-primary); }
+            .dashboard-header {
+                background: linear-gradient(90deg,#0c0f1d,#0b1124 50%,#0d1530);
+                border-bottom: 1px solid #111a2f;
+                box-shadow: 0 14px 28px rgba(0,0,0,0.5);
+                padding: 18px 32px;
+                position: relative;
+                z-index: 5;
+            }
+            .appbar-accent {
+                position:absolute; left:12px; right:12px; bottom:-4px;
+                height:6px; border-radius:999px;
+                background: linear-gradient(90deg,#6d28d9,#8b5cf6,#a855f7);
+                box-shadow: 0 10px 20px rgba(168,85,247,0.8);
+                pointer-events:none;
+            }
+            .dashboard-header-content { display:flex; align-items:center; gap:18px; min-height:74px; }
+            .icon-btn {
+                width:44px; height:44px; border-radius:12px; border:1px solid var(--border);
+                background:#111829; color:#e2e8f0; box-shadow:0 10px 24px rgba(0,0,0,0.35);
+                cursor:pointer; font-size:18px; transition: all .2s ease;
+            }
+            .icon-btn:hover { border-color: var(--accent); box-shadow:0 0 0 2px var(--accent-soft); color:#fff; }
+            .header-brand { display:flex; align-items:center; gap:14px; padding-right:16px; }
+            .brand-logo-shell {
+                width:46px; height:46px; border-radius:14px;
+                background: radial-gradient(circle at 30% 30%, #c084fc, #7c3aed 60%, #4c1d95 100%);
+                box-shadow: 0 8px 18px rgba(168,85,247,0.45), 0 0 0 1px rgba(255,255,255,0.05);
+                display:grid; place-items:center;
+                overflow:hidden;
+            }
+            .header-logo {
+                width:40px; height:40px; object-fit:contain;
+                filter: drop-shadow(0 0 8px rgba(168,85,247,0.55));
+            }
+            .brand-text-group { display:flex; flex-direction:column; gap:4px; }
+            .header-title { margin:0; font-size:28px; font-weight:800; letter-spacing:-0.2px; color:#f8fafc; line-height:1; }
+            .brand-subtitle { font-size:12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.6px; }
+            .header-search {
+                flex:1; max-width:520px; background:#151c2d; color:#e2e8f0;
+                border:1px solid #202a3c; border-radius:14px; padding:13px 16px; font-size:14px;
+                box-shadow: inset 0 0 0 1px var(--accent-soft), 0 8px 22px rgba(0,0,0,0.35);
+            }
+            .header-search::placeholder { color:#9fb0c8; }
+            .header-search:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 2px var(--accent-soft); }
+            .header-spacer { flex:1; }
+            .user-card {
+                display:flex; align-items:center; gap:10px;
+                background:#111829; border:1px solid var(--border); border-radius:16px;
+                padding:10px 14px; min-width:220px; box-shadow:0 10px 22px rgba(0,0,0,0.35);
+            }
+            .user-avatar {
+                width:46px; height:46px; border-radius:50%;
+                background: radial-gradient(circle at 30% 30%, #a855f7, #4c1d95);
+                display:grid; place-items:center; color:#fff; font-weight:800; letter-spacing:0.5px;
+            }
+            .user-name { font-size:14px; font-weight:700; color:#f8fafc; }
+            .user-email { font-size:12px; color:#9ca3af; }
+            .btn-logout {
+                background: linear-gradient(135deg, #7c3aed, #a855f7);
+                color:#fff; font-size:13px; font-weight:800;
+                border:none; border-radius:14px; padding:12px 22px;
+                box-shadow:0 14px 30px rgba(168,85,247,0.45); cursor:pointer; text-decoration:none;
+                transition: transform .15s ease, box-shadow .2s ease;
+            }
+            .btn-logout:hover { box-shadow:0 16px 34px rgba(168,85,247,0.55); transform: translateY(-1px); }
+            .dashboard-wrapper { display:flex; flex:1; overflow:hidden; }
+            .dashboard-sidebar {
+                background: radial-gradient(circle at top left, rgba(168,85,247,0.16), transparent 40%), #0c0a18;
+                border-right: 1px solid #1f1635;
+                width: 240px;
+                padding: 22px 16px;
+                overflow-y: auto;
+                flex-shrink: 0;
+                box-shadow: inset -1px 0 0 rgba(255,255,255,0.02);
+            }
+            .sidebar-logo { padding: 0 0 18px 4px; }
+            .logo-text { color: #e9ddff; font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+            .sidebar-section { margin-bottom: 18px; }
+            .sidebar-section-label { color: #b9a7ff; font-size: 11px; font-weight: 800; padding: 10px 0 6px 10px; text-transform: uppercase; letter-spacing: 1px; }
+            .sidebar-btn {
+                display: flex; align-items: center; gap: 10px;
+                background: transparent; color: #ede7ff; font-size: 14px;
+                text-align: left; padding: 12px 14px; border-radius: 12px; cursor: pointer; border: none;
+                width: 100%; text-decoration: none; transition: all 0.18s ease; margin-bottom: 6px;
+            }
+            .sidebar-btn:hover { background-color: #1b1233; color: #ffffff; box-shadow: inset 0 0 0 1px rgba(168, 85, 247, 0.3); }
+            .sidebar-btn-active { background: linear-gradient(135deg, #ff55f7, #a855f7); color: #ffffff; font-weight: 700; box-shadow: 0 12px 24px rgba(168,85,247,0.35); }
+            .sidebar-btn-active:hover { filter: brightness(1.08); }
+            .dashboard-content { flex:1; padding:28px; }
+
+            /* --- Home fallback styling (in case build CSS fails) --- */
+            .home-root { background: var(--bg-primary); color: var(--text-main); padding:12px; }
+            .home-main-title { display:block; font-size:30px; font-weight:800; color:#b277ff; margin:0 0 6px; }
+            .home-subtitle { display:block; font-size:14px; color:#9ca3af; margin:0 0 20px; }
+            .home-container { display:flex; gap:24px; align-items:flex-start; }
+            .home-column { flex:1; display:flex; flex-direction:column; gap:18px; }
+            .home-column-right { min-width:340px; flex-basis:380px; }
+            .home-column-title { display:block; font-size:16px; font-weight:800; color:#f8fafc; margin-bottom:8px; }
+            .home-kpi-grid { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:12px; }
+            .home-kpi-card {
+                position:relative; overflow:hidden; padding:18px;
+                background: radial-gradient(circle at 30% 20%, rgba(168,85,247,0.12), transparent 50%), #0f1020;
+                border:1px solid #1e2030; border-radius:14px;
+                box-shadow:0 14px 30px rgba(0,0,0,0.35);
+                display:flex; flex-direction:column; gap:8px;
+            }
+            .home-kpi-card::before { content:""; position:absolute; left:0; right:0; top:0; height:3px; background:linear-gradient(90deg,#a855f7,#7c3aed); }
+            .home-kpi-card.card-2::before { background:linear-gradient(90deg,#0ea5e9,#06b6d4); }
+            .home-kpi-card.card-3::before { background:linear-gradient(90deg,#10b981,#059669); }
+            .home-kpi-card.card-4::before { background:linear-gradient(90deg,#f59e0b,#d97706); }
+            .home-kpi-card-primary { box-shadow:0 14px 34px rgba(168,85,247,0.45), inset 0 0 0 1px rgba(168,85,247,0.25); }
+            .home-kpi-label { display:block; font-size:12px; font-weight:700; color:#9ca3af; }
+            .home-kpi-value { display:block; font-size:26px; font-weight:800; color:#f1f5f9; line-height:1; }
+            .home-kpi-trend { display:block; font-size:12px; color:#64748b; }
+            .home-kpi-trend.up { color:#10b981; font-weight:600; }
+            .home-section-card {
+                background: linear-gradient(180deg, rgba(18,18,30,0.9), rgba(14,14,22,0.95));
+                border:1px solid #1f1f2a; border-radius:14px;
+                box-shadow:0 14px 30px rgba(0,0,0,0.35);
+                padding:18px; display:flex; flex-direction:column; gap:12px;
+            }
+            .home-section-title { display:block; font-size:16px; font-weight:800; color:#f8fafc; margin:0; }
+            .home-posts-list { display:flex; flex-direction:column; gap:10px; }
+            .home-post-item-card {
+                display:flex; justify-content:space-between; align-items:center;
+                background:#141421; border:1px solid #1f1f2a; border-radius:10px;
+                padding:12px 14px; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.01);
+            }
+            .home-post-title { color:#e5e7eb; font-size:14px; font-weight:700; flex:1; }
+            .home-post-date { color:#9ca3af; font-size:12px; margin-left:12px; white-space:nowrap; }
+            .home-trends-container { display:flex; gap:16px; align-items:center; }
+            .home-progress-wrapper { width:64px; height:64px; position:relative; }
+            .home-progress {
+                width:100%; height:100%; border-radius:50%;
+                background: conic-gradient(#a855f7 0deg, #a855f7 calc(var(--progress)*3.6deg), #252530 calc(var(--progress)*3.6deg));
+                display:flex; align-items:center; justify-content:center; position:relative;
+            }
+            .home-progress::after { content:""; position:absolute; width:52px; height:52px; border-radius:50%; background:#0f0f17; }
+            .home-trend-info { display:flex; flex-direction:column; gap:4px; }
+            .home-card-label { color:#64748b; font-size:13px; }
+            .home-card-value { color:#f1f5f9; font-size:20px; font-weight:700; }
+            .home-chatbot-card {
+                background: radial-gradient(circle at 20% 20%, rgba(217,70,239,0.08), transparent 55%), #12111c;
+                border:1px solid #d946ef; border-radius:14px;
+                box-shadow:0 16px 32px rgba(0,0,0,0.4);
+                padding:18px; display:flex; flex-direction:column; gap:12px;
+            }
+            .home-chatbot-input {
+                height:40px; background:#0f0f17; border:1px solid #2a1f36; border-radius:8px;
+                color:#e2e8f0; font-size:13px; padding:10px 12px; width:100%;
+            }
+            .home-chatbot-input::placeholder { color:#64748b; }
+            .home-chatbot-input:focus { outline:none; border-color:#d946ef; box-shadow:0 0 0 2px rgba(217,70,239,0.2); }
+            .home-chatbot-buttons { display:flex; flex-direction:column; gap:6px; }
+            .home-chatbot-question {
+                background:#f4f4f6; color:#0f172a; border:1px solid #d1d5db; border-radius:8px;
+                padding:9px 12px; font-size:12px; text-align:left; cursor:pointer; transition:all .2s ease;
+            }
+            .home-chatbot-question:hover { background:#e5e7eb; border-color:#a855f7; }
+            .home-chatbot-reply {
+                background: rgba(15,15,23,0.65); border:1px solid rgba(255,255,255,0.05);
+                border-radius:10px; color:#e5e7eb; font-size:12px; line-height:1.6;
+                min-height:50px; padding:10px 12px; word-wrap:break-word;
+            }
+            @media (max-width: 1024px) {
+                .home-container { flex-direction: column; }
+                .home-column-right { flex-basis:auto; min-width:0; }
+                .home-kpi-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+            }
+            @media (max-width: 768px) {
+                .dashboard-wrapper { flex-direction: column; }
+                .dashboard-sidebar { border-bottom:1px solid #1a1a24; border-right:none; display:flex; gap:12px; overflow-x:auto; width:100%; }
+                .sidebar-section { display:flex; gap:8px; margin-bottom:0; }
+                .sidebar-section-label { display:none; }
+                .sidebar-btn { white-space: nowrap; margin-bottom:0; }
+                .dashboard-header-content { flex-direction: column; align-items: stretch; gap:12px; }
+                .home-kpi-grid { grid-template-columns: 1fr; }
+            }
+        </style>
+    {% endblock %}
+    {% block javascripts %}
+        {{ encore_entry_script_tags('app') }}
+    {% endblock %}
+</head>
+<body class="hh-body">
+<div class="dashboard-root">
+    <header class="dashboard-header">
+        <div class="dashboard-header-content">
+            <div class="header-brand">
+                <div class="brand-logo-shell">
+                    <img src="/assets/logo.png" alt="HireHive" class="header-logo">
+                </div>
+                <div class="brand-text-group">
+                    <h1 class="header-title">HireHive</h1>
+                    <span class="brand-subtitle">Backoffice</span>
+                </div>
+            </div>
+
+            <input type="text" class="header-search" placeholder="Rechercher...">
+
+            <button class="icon-btn header-bell" type="button" aria-label="Notifications">🔔</button>
+
+            <div class="header-spacer"></div>
+
+            <div class="user-card">
+                <div class="user-avatar">
+                    {{ (app.user.firstName ?? app.user.firstname ?? app.user.email ?? 'A')|slice(0,1)|upper }}
+                </div>
+                <div class="user-info">
+                    <div class="user-name">{{ app.user.firstName ?? app.user.firstname ?? 'Admin' }}</div>
+                    <div class="user-email">{{ app.user.email }}</div>
+                </div>
+            </div>
+
+            <a href="{{ path('app_logout') }}" class="btn-logout">Déconnexion</a>
+        </div>
+        <div class="appbar-accent"></div>
+    </header>
+
+    <div class="dashboard-wrapper">
+        <aside class="dashboard-sidebar">
+            <div class="sidebar-logo">
+                <span class="logo-text">Navigation</span>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-section-label">NAVIGATION</div>
+                <a href="{{ path('app_backoffice') }}" class="sidebar-btn {% if app.request.attributes.get('_route') == 'app_backoffice' %}sidebar-btn-active{% endif %}">Accueil</a>
+                <a href="{{ path('app_backoffice_users') }}" class="sidebar-btn {% if app.request.attributes.get('_route') == 'app_backoffice_users' %}sidebar-btn-active{% endif %}">Utilisateurs</a>
+                <a href="{{ path('app_backoffice_formations') }}" class="sidebar-btn {% if app.request.attributes.get('_route') == 'app_backoffice_formations' %}sidebar-btn-active{% endif %}">Formations</a>
+                <a href="{{ path('app_backoffice_posts') }}" class="sidebar-btn {% if app.request.attributes.get('_route') == 'app_backoffice_posts' %}sidebar-btn-active{% endif %}">Postes</a>
+                <a href="{{ path('app_backoffice_reclamations') }}" class="sidebar-btn {% if app.request.attributes.get('_route') == 'app_backoffice_reclamations' %}sidebar-btn-active{% endif %}">Réclamations</a>
+                <a href="{{ path('app_backoffice_interviews') }}" class="sidebar-btn {% if app.request.attributes.get('_route') == 'app_backoffice_interviews' %}sidebar-btn-active{% endif %}">Interviews</a>
+                <a href="{{ path('app_backoffice_offres') }}" class="sidebar-btn {% if app.request.attributes.get('_route') == 'app_backoffice_offres' %}sidebar-btn-active{% endif %}">Offres d'emploi</a>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-section-label">WORKSTATION</div>
+                <a href="{{ path('app_backoffice_parametres') }}" class="sidebar-btn {% if app.request.attributes.get('_route') == 'app_backoffice_parametres' %}sidebar-btn-active{% endif %}">Paramètres</a>
+                <a href="{{ path('app_backoffice_stats') }}" class="sidebar-btn {% if app.request.attributes.get('_route') == 'app_backoffice_stats' %}sidebar-btn-active{% endif %}">Statistiques</a>
+            </div>
+        </aside>
+
+        <main class="dashboard-content">
+            {% block backoffice_content %}{% endblock %}
+        </main>
+    </div>
+</div>
+</body>
+</html>

@@ -16,28 +16,22 @@ class DashboardController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
+        if ($this->isGranted('ROLE_ADMIN')) {
+            return $this->redirectToRoute('app_backoffice');
+        }
+
         return $this->redirectToRoute('app_frontoffice_home');
     }
 
     #[Route('/dashboard', name: 'app_dashboard')]
     public function dashboard(): Response
     {
-        return $this->render('backoffice/index.html.twig', [
-            'total_claims' => 156,
-            'open_claims' => 42,
-            'urgent_claims' => 8,
-            'resolved_claims' => 106,
-        ]);
+        return $this->redirectToRoute('app_backoffice');
     }
 
     #[Route('/admin', name: 'app_admin')]
     public function admin(): Response
     {
-        return $this->render('backoffice/index.html.twig', [
-            'total_claims' => 156,
-            'open_claims' => 42,
-            'urgent_claims' => 8,
-            'resolved_claims' => 106,
-        ]);
+        return $this->redirectToRoute('app_backoffice');
     }
 }

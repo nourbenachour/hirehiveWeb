@@ -1,0 +1,21 @@
+{% extends 'nour/backoffice/layout.html.twig' %}
+
+{% block title %}{{ section_title }} - Backoffice{% endblock %}
+
+{% block backoffice_content %}
+<div class="home-scroll">
+    <div class="home-root">
+        <label class="home-main-title">{{ section_title }}</label>
+        <label class="home-subtitle">{{ section_description }}</label>
+
+        <div class="home-container">
+            <div class="home-column">
+                <div class="home-section-card">
+                    <label class="home-section-title">{{ section_title }}</label>
+                    <p class="home-card-label">{{ section_description }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

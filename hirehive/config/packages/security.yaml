@@ -19,7 +19,7 @@ security:
             form_login:
                 login_path: app_login
                 check_path: app_login
-                default_target_path: app_frontoffice_home
+                success_handler: App\Security\LoginSuccessHandler
                 username_parameter: _username
                 password_parameter: _password
                 enable_csrf: true
@@ -35,6 +35,7 @@ security:
         - { path: ^/register, roles: PUBLIC_ACCESS }
         - { path: ^/frontoffice, roles: ROLE_USER }
         - { path: ^/dashboard, roles: ROLE_USER }
+        - { path: ^/backoffice, roles: ROLE_ADMIN }
         - { path: ^/admin, roles: ROLE_ADMIN }
 
 when@test:

@@ -1,0 +1,144 @@
+{% extends 'nour/backoffice/layout.html.twig' %}
+
+{% block title %}Tableau de bord - HireHive{% endblock %}
+
+{% block backoffice_content %}
+<div class="home-scroll">
+    <div class="home-root">
+        <label class="home-main-title">Tableau de bord</label>
+        <label class="home-subtitle">Vue d'ensemble plateforme recrutement & formations</label>
+
+        <div class="home-container">
+            <!-- Left Column: KPI & Posts & Trends -->
+            <div class="home-column">
+                <label class="home-column-title">KPI & Affiches</label>
+
+                <div class="home-kpi-grid">
+                    <div class="home-kpi-card home-kpi-card-primary">
+                        <label class="home-kpi-label">Utilisateurs</label>
+                        <label class="home-kpi-value">{{ total_users|default(17) }}</label>
+                        <label class="home-kpi-trend up">+12%</label>
+                    </div>
+                    <div class="home-kpi-card card-2">
+                        <label class="home-kpi-label">Candidats</label>
+                        <label class="home-kpi-value">{{ total_candidates|default(10) }}</label>
+                        <label class="home-kpi-trend up">+8%</label>
+                    </div>
+                    <div class="home-kpi-card card-3">
+                        <label class="home-kpi-label">Offres</label>
+                        <label class="home-kpi-value">{{ total_offers|default(48) }}</label>
+                        <label class="home-kpi-trend">Stable</label>
+                    </div>
+                    <div class="home-kpi-card card-4">
+                        <label class="home-kpi-label">Entretiens</label>
+                        <label class="home-kpi-value">{{ total_interviews|default(19) }}</label>
+                        <label class="home-kpi-trend up">+24%</label>
+                    </div>
+                </div>
+
+                <div class="home-section-card posts-card">
+                    <label class="home-section-title">Dernières affiches / Postes</label>
+                    <div class="home-posts-list">
+                        {% for post in posts|default([
+                            {title: 'Dev. Java Senior', ago: 'Il y a 2j'},
+                            {title: 'Formation Python avancée', ago: 'Il y a 5j'},
+                            {title: 'Admin Oracle / DBA', ago: 'Il y a 1 sem.'},
+                            {title: 'Full Stack Java + Angular', ago: 'Il y a 1 sem.'}
+                        ]) %}
+                            <div class="home-post-item-card">
+                                <div class="home-post-title">{{ post.title }}</div>
+                                <div class="home-post-date">{{ post.ago }}</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="home-section-card trends-card">
+                    <label class="home-section-title">Tendances</label>
+                    <div class="home-trends-container">
+                        <div class="home-progress-wrapper">
+                            <div class="home-progress" style="--progress: 68%"></div>
+                        </div>
+                        <div class="home-trend-info">
+                            <label class="home-card-label">Conversion candidatures -> entretiens</label>
+                            <label class="home-card-value">68%</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Chatbot -->
+            <div class="home-column home-column-right">
+                <label class="home-column-title">Assistant IA (Chatbot)</label>
+                <div class="home-chatbot-card">
+                    <input type="text" id="chatbotInput" class="home-chatbot-input" placeholder="Entrez le nom ou l'URL de l'entreprise puis Entrée">
+                    <div class="home-chatbot-buttons">
+                        <button id="qWebsite" class="home-chatbot-question">Vérifier le site web (HTTP)</button>
+                        <button id="qApi" class="home-chatbot-question">Rechercher INSEE (open data)</button>
+                        <button id="qRestart" class="home-chatbot-question">Recommencer</button>
+                    </div>
+                    <div id="chatbotReply" class="home-chatbot-reply">[18:56:08] BOT: Bonjour, je peux tester le site web (HTTP) et interroger l'API INSEE (open data). Saisissez le nom ou l'URL, puis utilisez les boutons.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const chatbotInput = document.getElementById('chatbotInput');
+        const qWebsite = document.getElementById('qWebsite');
+        const qApi = document.getElementById('qApi');
+        const qRestart = document.getElementById('qRestart');
+        const chatbotReply = document.getElementById('chatbotReply');
+
+        qWebsite.addEventListener('click', function() {
+            const url = chatbotInput.value.trim();
+            if (!url) {
+                chatbotReply.textContent = 'Merci d’indiquer une URL ou un nom de domaine.';
+                return;
+            }
+            
+            fetch('{{ path("app_backoffice_chatbot_ping") }}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: url })
+            })
+            .then(r => r.json())
+            .then(data => {
+                chatbotReply.textContent = data.message;
+            })
+            .catch(e => chatbotReply.textContent = 'Erreur: ' + e.message);
+        });
+
+        qApi.addEventListener('click', function() {
+            const query = chatbotInput.value.trim();
+            if (!query) {
+                chatbotReply.textContent = 'Merci d’indiquer le nom de l’entreprise.';
+                return;
+            }
+            
+            fetch('{{ path("app_backoffice_chatbot_insee") }}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query: query })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.ok) {
+                    const r = data.result;
+                    chatbotReply.textContent = `${r.denomination} (SIREN: ${r.siren}) - ${r.etat}`;
+                } else {
+                    chatbotReply.textContent = data.message;
+                }
+            })
+            .catch(e => chatbotReply.textContent = 'Erreur: ' + e.message);
+        });
+
+        qRestart.addEventListener('click', function() {
+            chatbotInput.value = '';
+            chatbotReply.textContent = '[18:56:08] BOT: Bonjour, je peux tester le site web (HTTP) et interroger l’API INSEE (open data). Saisissez le nom ou l’URL, puis utilisez les boutons.';
+        });
+    });
+</script>
+{% endblock %}
